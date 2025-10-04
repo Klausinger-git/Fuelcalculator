@@ -2,83 +2,32 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Spritverbrauch Rechner für Simracer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #eee;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-      max-width: 400px;
-      width: 100%;
-    }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      border-radius: 6px;
-      background: #4caf50;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 15px;
-      padding: 10px;
-      background: #2a2a2a;
-      border-radius: 6px;
-    }
-  </style>
+  <title>Spritrechner</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Spritverbrauch-Rechner</h1>
-    <label>Verbrauch pro Runde (Liter):</label>
-    <input type="number" id="verbrauch" step="0.01">
+  <h1>Spritverbrauch-Rechner</h1>
 
-    <label>Tankvolumen (Liter):</label>
-    <input type="number" id="tank" step="0.1">
+  <label>Verbrauch pro Runde (Liter):</label>
+  <input id="verbrauch" type="number" step="0.01">
 
-    <label>Rennlänge (Runden):</label>
-    <input type="number" id="runden">
+  <label>Tankvolumen (Liter):</label>
+  <input id="tank" type="number" step="0.1">
 
-    <button onclick="berechnen()">Berechnen</button>
+  <label>Rundenanzahl:</label>
+  <input id="runden" type="number">
 
-    <div class="result" id="ergebnis"></div>
-  </div>
+  <button onclick="berechneSprit()">Berechnen</button>
+
+  <p id="ergebnis"></p>
 
   <script>
-    function berechnen() {
+    // Hier kommt deine Funktion rein:
+    function berechneSprit() {
       const verbrauch = parseFloat(document.getElementById("verbrauch").value);
       const tank = parseFloat(document.getElementById("tank").value);
       const runden = parseInt(document.getElementById("runden").value);
 
+      // Kontrolle: Sind alle Werte eingegeben?
       if (isNaN(verbrauch) || isNaN(tank) || isNaN(runden)) {
         document.getElementById("ergebnis").innerText = "Bitte alle Werte eingeben.";
         return;
@@ -97,6 +46,7 @@
         text += `✅ Tank reicht für das gesamte Rennen.`;
       }
 
+      // Ergebnis anzeigen:
       document.getElementById("ergebnis").innerText = text;
     }
   </script>
