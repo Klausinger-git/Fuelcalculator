@@ -53,20 +53,28 @@
       padding: 10px;
       background: #2a2a2a;
       border-radius: 6px;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Spritverbrauch-Rechner</h1>
+
+    <label>Rennlänge (Minuten):</label>
+    <input type="number" id="rennzeit" step="0.1">
+
+    <label>Rundenzeit (Sekunden):</label>
+    <input type="number" id="rundenzeit" step="0.1">
+
     <label>Verbrauch pro Runde (Liter):</label>
     <input type="number" id="verbrauch" step="0.01">
 
     <label>Tankvolumen (Liter):</label>
     <input type="number" id="tank" step="0.1">
 
-    <label>Rennlänge (Runden):</label>
-    <input type="number" id="runden">
+    <label>Anzahl Boxenstopps:</label>
+    <input type="number" id="stopps" min="0" step="1" value="0">
 
     <button onclick="berechnen()">Berechnen</button>
 
@@ -75,27 +83,35 @@
 
   <script>
     function berechnen() {
+      const rennzeit = parseFloat(document.getElementById("rennzeit").value);
+      const rundenzeit = parseFloat(document.getElementById("rundenzeit").value);
       const verbrauch = parseFloat(document.getElementById("verbrauch").value);
       const tank = parseFloat(document.getElementById("tank").value);
-      const runden = parseInt(document.getElementById("runden").value);
+      const stopps = parseInt(document.getElementById("stopps").value);
 
-      if (isNaN(verbrauch) || isNaN(tank) || isNaN(runden)) {
+      if (isNaN(rennzeit) || isNaN(rundenzeit) || isNaN(verbrauch) || isNaN(tank) || isNaN(stopps)) {
         document.getElementById("ergebnis").innerText = "Bitte alle Werte eingeben.";
         return;
       }
 
+      // Berechnung der Rundenanzahl
+      const runden = (rennzeit * 60) / rundenzeit;
+
+      // Gesamtverbrauch
       const gesamtVerbrauch = verbrauch * runden;
-      const moeglicheRunden = Math.floor(tank / verbrauch);
 
-      let text = `Gesamtverbrauch: ${gesamtVerbrauch.toFixed(2)} L\n`;
-      text += `Maximale Runden mit vollem Tank: ${moeglicheRunden}\n`;
+      // Verbrauch pro Stint (zwischen Boxenstopps)
+      const stintVerbrauch = gesamtVerbrauch / (stopps + 1);
 
-      if (gesamtVerbrauch > tank) {
-        const tankstopps = Math.ceil(gesamtVerbrauch / tank) - 1;
-        text += `⚠️ Du brauchst mindestens ${tankstopps} Boxenstopp(s).`;
-      } else {
-        text += `✅ Tank reicht für das gesamte Rennen.`;
-      }
+      // Erforderlicher Verbrauch je Runde, damit Tank reicht
+      const rundenProStint = runden / (stopps + 1);
+      const verbrauchJeRundeNoetig = tank / rundenProStint;
+
+      let text = `🏁 Geschätzte Runden: ${runden.toFixed(1)}\n`;
+      text += `Gesamtverbrauch: ${gesamtVerbrauch.toFixed(2)} L\n`;
+      text += `Verbrauch pro Stint: ${stintVerbrauch.toFixed(2)} L\n`;
+      text += `Notwendiger Verbrauch je Runde, damit der Tank reicht: ${verbrauchJeRundeNoetig.toFixed(3)} L\n`;
+      text += `Durchschnittlicher Verbrauch pro Runde: ${verbrauch.toFixed(3)} L`;
 
       document.getElementById("ergebnis").innerText = text;
     }
