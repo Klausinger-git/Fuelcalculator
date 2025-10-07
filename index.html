@@ -127,8 +127,8 @@
       let text = `🏁 Geschätzte Runden: ${runden.toFixed(1)}\n`;
       text += `Gesamtverbrauch: ${gesamtVerbrauch.toFixed(2)} L\n`;
       text += `Verbrauch pro Stint: ${stintVerbrauch.toFixed(2)} L\n`;
-      text += `Notwendiger Verbrauch je Runde: ${verbrauchJeRundeNoetig.toFixed(3)} L\n`;
-      text += `Durchschnittlicher Verbrauch je Runde: ${verbrauch.toFixed(3)} L\n`;
+      text += `Max. Verbrauch je Runde bei Tankinhalt ${tank} L: ${verbrauchJeRundeNoetig.toFixed(2)} L\n`;
+      text += `Durchschnittlicher Verbrauch je Runde: ${verbrauch.toFixed(2)} L\n`;
       text += `Boxenstopps: ${noetigeStopps}`;
 
       document.getElementById("ergebnis").innerText = text;
