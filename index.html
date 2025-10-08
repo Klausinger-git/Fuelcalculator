@@ -18,7 +18,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(0,0,0,0.5);
-      max-width: 420px;
+      max-width: 440px;
       width: 100%;
     }
     h1 {
@@ -124,12 +124,28 @@
       const rundenProStint = runden / (noetigeStopps + 1);
       const verbrauchJeRundeNoetig = tank / rundenProStint;
 
+      // Verbrauch je Runde bei einem Stopp weniger
+      let verbrauchJeRundeWenigerStopps = "—";
+      if (noetigeStopps > 0) {
+        const rundenProStintWeniger = runden / noetigeStopps;
+        verbrauchJeRundeWenigerStopps = (tank / rundenProStintWeniger).toFixed(3);
+      }
+
+      // Wie viel tanken beim letzten Boxenstopp (wenn immer voll getankt wird)
+      let letzterStintVerbrauch = gesamtVerbrauch - (tank * noetigeStopps);
+      if (letzterStintVerbrauch < 0) letzterStintVerbrauch = 0;
+
       let text = `🏁 Geschätzte Runden: ${runden.toFixed(1)}\n`;
       text += `Gesamtverbrauch: ${gesamtVerbrauch.toFixed(2)} L\n`;
       text += `Verbrauch pro Stint: ${stintVerbrauch.toFixed(2)} L\n`;
-      text += `Max. Verbrauch je Runde bei Tankinhalt ${tank} L: ${verbrauchJeRundeNoetig.toFixed(2)} L\n`;
-      text += `Durchschnittlicher Verbrauch je Runde: ${verbrauch.toFixed(2)} L\n`;
-      text += `Boxenstopps: ${noetigeStopps}`;
+      text += `max. Verbrauch je Runde bei Tankinhalt ${tank} L: ${verbrauchJeRundeNoetig.toFixed(2)} L\n`;
+      text += `Durchschnittlicher Verbrauch je Runde: ${verbrauch.toFixed(3)} L\n`;
+      text += `Boxenstopps: ${noetigeStopps}\n`;
+
+      if (noetigeStopps > 0) {
+        text += `\n🔹 Verbrauch je Runde bei ${noetigeStopps - 1} Stopps: ${verbrauchJeRundeWenigerStopps} L`;
+        text += `\n🔹 Tanken beim letzten Stopp (wenn sonst immer voll): ${letzterStintVerbrauch.toFixed(2)} L`;
+      }
 
       document.getElementById("ergebnis").innerText = text;
     }
