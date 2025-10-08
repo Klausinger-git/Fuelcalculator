@@ -94,4 +94,83 @@
     <input type="number" id="verbrauch" step="0.01">
 
     <label>Tankvolumen (Liter):</label>
-    <input type="number" id="tank" step="0.
+    <input type="number" id="tank" step="0.1">
+
+    <label>(Optional) Anzahl Boxenstopps:</label>
+    <input type="number" id="stopps" min="0" step="1" placeholder="leer lassen für automatische Berechnung">
+
+    <button onclick="berechnen()">Berechnen</button>
+
+    <div class="result" id="ergebnis"></div>
+  </div>
+
+  <script>
+    function zeile(label, value) {
+      return `
+        <div class="line">
+          <div class="label">${label}:</div>
+          <div class="value">${value}</div>
+        </div>`;
+    }
+
+    function berechnen() {
+      const rennzeit = parseFloat(document.getElementById("rennzeit").value);
+      const rundenzeitMin = parseFloat(document.getElementById("rundenzeit_min").value) || 0;
+      const rundenzeitSec = parseFloat(document.getElementById("rundenzeit_sec").value) || 0;
+      const verbrauch = parseFloat(document.getElementById("verbrauch").value);
+      const tank = parseFloat(document.getElementById("tank").value);
+      const stoppsInput = document.getElementById("stopps").value;
+      const stopps = stoppsInput === "" ? null : parseInt(stoppsInput);
+
+      const ergebnisDiv = document.getElementById("ergebnis");
+
+      if (isNaN(rennzeit) || isNaN(verbrauch) || isNaN(tank)) {
+        ergebnisDiv.innerHTML = "Bitte alle erforderlichen Werte eingeben.";
+        return;
+      }
+
+      const rundenzeit = (rundenzeitMin * 60) + rundenzeitSec;
+      if (rundenzeit <= 0) {
+        ergebnisDiv.innerHTML = "Bitte gültige Rundenzeit angeben.";
+        return;
+      }
+
+      const runden = Math.ceil((rennzeit * 60) / rundenzeit); // Immer aufrunden!
+      const gesamtVerbrauch = verbrauch * runden;
+
+      let noetigeStopps = stopps;
+      if (stopps === null) {
+        noetigeStopps = Math.max(0, Math.ceil(gesamtVerbrauch / tank) - 1);
+      }
+
+      const stintVerbrauch = gesamtVerbrauch / (noetigeStopps + 1);
+      const rundenProStint = runden / (noetigeStopps + 1);
+      const verbrauchJeRundeNoetig = tank / rundenProStint;
+
+      let verbrauchJeRundeWenigerStopps = "—";
+      if (noetigeStopps > 0) {
+        const rundenProStintWeniger = runden / noetigeStopps;
+        verbrauchJeRundeWenigerStopps = (tank / rundenProStintWeniger).toFixed(2);
+      }
+
+      let letzterStintVerbrauch = gesamtVerbrauch - (tank * noetigeStopps);
+      if (letzterStintVerbrauch < 0) letzterStintVerbrauch = 0;
+
+      let html = "";
+      html += zeile("🏁 Geschätzte Runden", runden);
+      html += zeile("Gesamtverbrauch", `${gesamtVerbrauch.toFixed(2)} L`);
+      html += zeile("Verbrauch pro Stint", `${stintVerbrauch.toFixed(2)} L`);
+      html += zeile("Notwendiger Verbrauch je Runde", `${verbrauchJeRundeNoetig.toFixed(2)} L`);
+      html += zeile("Durchschnittlicher Verbrauch je Runde", `${verbrauch.toFixed(2)} L`);
+      html += zeile("Boxenstopps", noetigeStopps);
+
+      if (noetigeStopps > 0) {
+        html += zeile(`Verbrauch je Runde bei ${noetigeStopps - 1} Stopps`, `${verbrauchJeRundeWenigerStopps} L`);
+        html += zeile("Tanken beim letzten Stopp (wenn sonst voll)", `${letzterStintVerbrauch.toFixed(2)} L`);
+      }
+
+      ergebnisDiv.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
