@@ -158,15 +158,15 @@
 
       let html = "";
       html += zeile("🏁 Geschätzte Runden", runden);
-      html += zeile("Gesamtverbrauch", `${gesamtVerbrauch.toFixed(2)} L`);
-      html += zeile("Verbrauch pro Stint", `${stintVerbrauch.toFixed(2)} L`);
-      html += zeile("Notwendiger Verbrauch je Runde", `${verbrauchJeRundeNoetig.toFixed(2)} L`);
-      html += zeile("Durchschnittlicher Verbrauch je Runde", `${verbrauch.toFixed(2)} L`);
-      html += zeile("Boxenstopps", noetigeStopps);
+      html += zeile("⛽ Gesamtverbrauch", `${gesamtVerbrauch.toFixed(2)} L`);
+      html += zeile("⛽ Verbrauch pro Stint", `${stintVerbrauch.toFixed(2)} L`);
+      html += zeile("max Verbrauch je Runde", `${verbrauchJeRundeNoetig.toFixed(2)} L`);
+      html += zeile("Ø Verbrauch je Runde", `${verbrauch.toFixed(2)} L`);
+      html += zeile("🛑 Boxenstopps", noetigeStopps);
 
       if (noetigeStopps > 0) {
         html += zeile(`Verbrauch je Runde bei ${noetigeStopps - 1} Stopps`, `${verbrauchJeRundeWenigerStopps} L`);
-        html += zeile("Tanken beim letzten Stopp (wenn sonst voll)", `${letzterStintVerbrauch.toFixed(2)} L`);
+        html += zeile("⛽ Tanken beim letzten Stopp", `${letzterStintVerbrauch.toFixed(2)} L`);
       }
 
       ergebnisDiv.innerHTML = html;
