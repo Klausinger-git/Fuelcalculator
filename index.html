@@ -1,176 +1,141 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Spritverbrauch Rechner für Simracer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #eee;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-      max-width: 460px;
-      width: 100%;
-    }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: none;
-    }
-    .row {
-      display: flex;
-      gap: 8px;
-    }
-    .row input {
-      flex: 1;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      border-radius: 6px;
-      background: #4caf50;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 15px;
-      padding: 10px;
-      background: #2a2a2a;
-      border-radius: 6px;
-    }
-    .line {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #333;
-    }
-    .label {
-      flex: 1.6;
-      text-align: left;
-    }
-    .value {
-      flex: 1;
-      text-align: right;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Spritverbrauch Rechner</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  width: 480px;
+}
+label { margin-top: 10px; display: block; }
+input { width: 100%; padding: 8px; border-radius: 6px; border: none; margin-top: 4px; }
+.row { display: flex; gap: 6px; }
+.row input { flex: 1; }
+button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #4caf50;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 16px;
+}
+.result { margin-top: 15px; background: #2a2a2a; padding: 10px; border-radius: 6px; }
+.line {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #333;
+  padding: 4px 0;
+}
+.bar {
+  background: #333;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.bar-fill {
+  background: #4caf50;
+  height: 18px;
+}
+.small { font-size: 13px; opacity: 0.85; }
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Spritverbrauch-Rechner</h1>
+<div class="container">
+<h1>Spritverbrauch-Rechner</h1>
 
-    <label>Rennlänge (Minuten):</label>
-    <input type="number" id="rennzeit" step="0.1">
+<label>Rennlänge (Minuten)</label>
+<input type="number" id="rennzeit">
 
-    <label>Rundenzeit:</label>
-    <div class="row">
-      <input type="number" id="rundenzeit_min" placeholder="Minuten" min="0" step="1">
-      <input type="number" id="rundenzeit_sec" placeholder="Sekunden" min="0" step="0.1">
-    </div>
+<label>Rundenzeit</label>
+<div class="row">
+  <input type="number" id="rtMin" placeholder="Min">
+  <input type="number" id="rtSec" placeholder="Sek">
+</div>
 
-    <label>Verbrauch pro Runde (Liter):</label>
-    <input type="number" id="verbrauch" step="0.01">
+<label>Verbrauch pro Runde (L)</label>
+<input type="number" id="verbrauch" step="0.01">
 
-    <label>Tankvolumen (Liter):</label>
-    <input type="number" id="tank" step="0.1">
+<label>Tankvolumen (L)</label>
+<input type="number" id="tank" step="0.1">
 
-    <label>(Optional) Anzahl Boxenstopps:</label>
-    <input type="number" id="stopps" min="0" step="1" placeholder="leer lassen für automatische Berechnung">
+<button onclick="berechnen()">Berechnen</button>
 
-    <button onclick="berechnen()">Berechnen</button>
+<div class="result" id="out"></div>
+</div>
 
-    <div class="result" id="ergebnis"></div>
-  </div>
+<script>
+function line(l, v) {
+  return `<div class="line"><div>${l}:</div><div>${v}</div></div>`;
+}
 
-  <script>
-    function zeile(label, value) {
-      return `
-        <div class="line">
-          <div class="label">${label}:</div>
-          <div class="value">${value}</div>
-        </div>`;
+function berechnen() {
+  const rennzeit = +rennzeit.value;
+  const rundenzeit = (+rtMin.value * 60) + (+rtSec.value);
+  const verbrauch = +verbrauch.value;
+  const tank = +tank.value;
+  const out = document.getElementById("out");
+
+  if (!rennzeit || !rundenzeit || !verbrauch || !tank) {
+    out.innerHTML = "Bitte alle Werte eingeben.";
+    return;
+  }
+
+  const runden = Math.ceil((rennzeit * 60) / rundenzeit);
+  const gesamt = runden * verbrauch;
+  const stopps = Math.max(0, Math.ceil(gesamt / tank) - 1);
+  const stints = stopps + 1;
+  const rundenProStint = Math.floor(runden / stints);
+
+  let html = "";
+  html += line("Geschätzte Runden", runden);
+  html += line("Boxenstopps", stopps);
+  html += line("Runden pro Stint", rundenProStint);
+  html += line("Gesamtverbrauch", gesamt.toFixed(2) + " L");
+
+  // Boxenstopp-Runden
+  if (stopps > 0) {
+    html += `<div class="small"><br>📍 Boxenstopps:</div>`;
+    for (let i = 1; i <= stopps; i++) {
+      html += `<div class="small">→ nach Runde ${i * rundenProStint}</div>`;
     }
+  }
 
-    function berechnen() {
-      const rennzeit = parseFloat(document.getElementById("rennzeit").value);
-      const rundenzeitMin = parseFloat(document.getElementById("rundenzeit_min").value) || 0;
-      const rundenzeitSec = parseFloat(document.getElementById("rundenzeit_sec").value) || 0;
-      const verbrauch = parseFloat(document.getElementById("verbrauch").value);
-      const tank = parseFloat(document.getElementById("tank").value);
-      const stoppsInput = document.getElementById("stopps").value;
-      const stopps = stoppsInput === "" ? null : parseInt(stoppsInput);
+  // Verbrauch für +1 Runde
+  const verbrauchSpaeter = tank / (rundenProStint + 1);
+  const ersparnis = verbrauch - verbrauchSpaeter;
 
-      const ergebnisDiv = document.getElementById("ergebnis");
+  html += line("Verbrauch für 1 Runde später", verbrauchSpaeter.toFixed(2) + " L");
+  html += line("Notwendige Einsparung / Runde", ersparnis.toFixed(2) + " L");
 
-      if (isNaN(rennzeit) || isNaN(verbrauch) || isNaN(tank)) {
-        ergebnisDiv.innerHTML = "Bitte alle erforderlichen Werte eingeben.";
-        return;
-      }
+  // Balken
+  html += `<br><div class="small">⛽ Tankstints:</div>`;
+  for (let i = 1; i <= stints; i++) {
+    const verbrauchStint = Math.min(tank, gesamt - tank * (i - 1));
+    const percent = Math.min(100, (verbrauchStint / tank) * 100);
+    html += `
+      <div class="small">Stint ${i} (${verbrauchStint.toFixed(2)} L)</div>
+      <div class="bar">
+        <div class="bar-fill" style="width:${percent}%"></div>
+      </div>`;
+  }
 
-      const rundenzeit = (rundenzeitMin * 60) + rundenzeitSec;
-      if (rundenzeit <= 0) {
-        ergebnisDiv.innerHTML = "Bitte gültige Rundenzeit angeben.";
-        return;
-      }
-
-      const runden = Math.ceil((rennzeit * 60) / rundenzeit); // Immer aufrunden!
-      const gesamtVerbrauch = verbrauch * runden;
-
-      let noetigeStopps = stopps;
-      if (stopps === null) {
-        noetigeStopps = Math.max(0, Math.ceil(gesamtVerbrauch / tank) - 1);
-      }
-
-      const stintVerbrauch = gesamtVerbrauch / (noetigeStopps + 1);
-      const rundenProStint = runden / (noetigeStopps + 1);
-      const verbrauchJeRundeNoetig = tank / rundenProStint;
-
-      let verbrauchJeRundeWenigerStopps = "—";
-      if (noetigeStopps > 0) {
-        const rundenProStintWeniger = runden / noetigeStopps;
-        verbrauchJeRundeWenigerStopps = (tank / rundenProStintWeniger).toFixed(2);
-      }
-
-      let letzterStintVerbrauch = gesamtVerbrauch - (tank * noetigeStopps);
-      if (letzterStintVerbrauch < 0) letzterStintVerbrauch = 0;
-
-      let html = "";
-      html += zeile("🏁 Geschätzte Runden", runden);
-      html += zeile("⛽ Gesamtverbrauch", `${gesamtVerbrauch.toFixed(2)} L`);
-      html += zeile("⛽ Verbrauch pro Stint", `${stintVerbrauch.toFixed(2)} L`);
-      html += zeile("max Verbrauch je Runde", `${verbrauchJeRundeNoetig.toFixed(2)} L`);
-      html += zeile("Ø Verbrauch je Runde", `${verbrauch.toFixed(2)} L`);
-      html += zeile("🛑 Boxenstopps", noetigeStopps);
-
-      if (noetigeStopps > 0) {
-        html += zeile(`♻ Verbrauch je Runde bei ${noetigeStopps - 1} Stopps`, `${verbrauchJeRundeWenigerStopps} L`);
-        html += zeile("⛽ Tanken beim letzten Stopp", `${letzterStintVerbrauch.toFixed(2)} L`);
-      }
-
-      ergebnisDiv.innerHTML = html;
-    }
-  </script>
+  out.innerHTML = html;
+}
+</script>
 </body>
 </html>
