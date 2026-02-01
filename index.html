@@ -84,11 +84,17 @@ function line(l, v) {
 }
 
 function berechnen() {
-  const rennzeit = +rennzeit.value;
-  const rundenzeit = (+rtMin.value * 60) + (+rtSec.value);
-  const verbrauch = +verbrauch.value;
-  const tank = +tank.value;
+  const rennzeitEl = document.getElementById("rennzeit");
+  const rtMinEl = document.getElementById("rtMin");
+  const rtSecEl = document.getElementById("rtSec");
+  const verbrauchEl = document.getElementById("verbrauch");
+  const tankEl = document.getElementById("tank");
   const out = document.getElementById("out");
+
+  const rennzeit = Number(rennzeitEl.value);
+  const rundenzeit = (Number(rtMinEl.value) * 60) + Number(rtSecEl.value);
+  const verbrauch = Number(verbrauchEl.value);
+  const tank = Number(tankEl.value);
 
   if (!rennzeit || !rundenzeit || !verbrauch || !tank) {
     out.innerHTML = "Bitte alle Werte eingeben.";
@@ -102,18 +108,37 @@ function berechnen() {
   const rundenProStint = Math.floor(runden / stints);
 
   let html = "";
-  html += line("Geschätzte Runden", runden);
-  html += line("Boxenstopps", stopps);
-  html += line("Runden pro Stint", rundenProStint);
-  html += line("Gesamtverbrauch", gesamt.toFixed(2) + " L");
+  html += `<div class="line"><div>Geschätzte Runden:</div><div>${runden}</div></div>`;
+  html += `<div class="line"><div>Boxenstopps:</div><div>${stopps}</div></div>`;
+  html += `<div class="line"><div>Runden pro Stint:</div><div>${rundenProStint}</div></div>`;
+  html += `<div class="line"><div>Gesamtverbrauch:</div><div>${gesamt.toFixed(2)} L</div></div>`;
 
-  // Boxenstopp-Runden
   if (stopps > 0) {
     html += `<div class="small"><br>📍 Boxenstopps:</div>`;
     for (let i = 1; i <= stopps; i++) {
       html += `<div class="small">→ nach Runde ${i * rundenProStint}</div>`;
     }
   }
+
+  const verbrauchSpaeter = tank / (rundenProStint + 1);
+  const ersparnis = verbrauch - verbrauchSpaeter;
+
+  html += `<div class="line"><div>Verbrauch für 1 Runde später:</div><div>${verbrauchSpaeter.toFixed(2)} L</div></div>`;
+  html += `<div class="line"><div>Ersparnis je Runde:</div><div>${ersparnis.toFixed(2)} L</div></div>`;
+
+  html += `<br><div class="small">⛽ Tankstints:</div>`;
+  for (let i = 1; i <= stints; i++) {
+    const verbrauchStint = Math.min(tank, gesamt - tank * (i - 1));
+    const percent = Math.min(100, (verbrauchStint / tank) * 100);
+    html += `
+      <div class="small">Stint ${i} (${verbrauchStint.toFixed(2)} L)</div>
+      <div class="bar">
+        <div class="bar-fill" style="width:${percent}%"></div>
+      </div>`;
+  }
+
+  out.innerHTML = html;
+}
 
   // Verbrauch für +1 Runde
   const verbrauchSpaeter = tank / (rundenProStint + 1);
