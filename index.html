@@ -140,27 +140,6 @@ function berechnen() {
   out.innerHTML = html;
 }
 
-  // Verbrauch für +1 Runde
-  const verbrauchSpaeter = tank / (rundenProStint + 1);
-  const ersparnis = verbrauch - verbrauchSpaeter;
-
-  html += line("Verbrauch für 1 Runde später", verbrauchSpaeter.toFixed(2) + " L");
-  html += line("Notwendige Einsparung / Runde", ersparnis.toFixed(2) + " L");
-
-  // Balken
-  html += `<br><div class="small">⛽ Tankstints:</div>`;
-  for (let i = 1; i <= stints; i++) {
-    const verbrauchStint = Math.min(tank, gesamt - tank * (i - 1));
-    const percent = Math.min(100, (verbrauchStint / tank) * 100);
-    html += `
-      <div class="small">Stint ${i} (${verbrauchStint.toFixed(2)} L)</div>
-      <div class="bar">
-        <div class="bar-fill" style="width:${percent}%"></div>
-      </div>`;
-  }
-
-  out.innerHTML = html;
-}
 </script>
 </body>
 </html>
