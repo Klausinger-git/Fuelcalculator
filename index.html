@@ -106,11 +106,13 @@ function berechnen() {
   const stopps = Math.max(0, Math.ceil(gesamt / tank) - 1);
   const stints = stopps + 1;
   const rundenProStint = Math.floor(runden / stints);
+  const maxRunden = Math.floor(tank / verbrauch)
 
   let html = "";
   html += line("Geschätzte Runden", runden);
   html += line("Boxenstopps", stopps);
   html += line("Runden pro Stint", rundenProStint);
+  html += line("max. Runden bei", tank, " L")
   html += line("Gesamtverbrauch", `${gesamt.toFixed(2)} L`);
 
   if (stopps > 0) {
