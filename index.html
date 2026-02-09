@@ -120,8 +120,9 @@ function berechnen() {
     }
   }
 
-  // Verbrauchsberechnung bei einer Runde mehr mit gleichem Tank
-  const verbrauchNeu = tank / (runden + 1);
+  // Verbrauchsberechnung bei einer Runde mehr pro Stint mit gleichem Tank.
+  //const verbrauchNeu = tank / (runden + 1);
+  const verbrauchNeu = tank / (rundenProStint + 1);
   const verbrauchDifferenz = verbrauch - verbrauchNeu;
 
   html += `<br><div class="small">⛽ Tankstints:</div>`;
