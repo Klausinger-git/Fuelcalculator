@@ -121,9 +121,10 @@ function berechnen() {
   }
 
   // Verbrauchsberechnung bei einer Runde mehr pro Stint mit gleichem Tank.
-  //const verbrauchNeu = tank / (runden + 1);
-  const verbrauchNeu = tank / (rundenProStint + 1);
-  const verbrauchDifferenz = verbrauch - verbrauchNeu;
+  const verbrauchNeuProRunde = tank / (rundenProStint + 1);
+  const rundenNeu = stints * (rundenProStint + 1);
+  const gesamtNeu = verbrauchNeuProRunde * rundenNeu;
+  const verbrauchDifferenz = verbrauch - verbrauchNeuProRunde;
 
   html += `<br><div class="small">⛽ Tankstints:</div>`;
   for (let i = 1; i <= stints; i++) {
@@ -139,8 +140,9 @@ function berechnen() {
   // Ausgabe der Verbrauchswerte
   html += `<br>`;
   html += line(`Verbrauch pro Runde bei ${runden} Runden`, `${verbrauch.toFixed(2)} L`);
-  html += line(`Max. Verbrauch pro Runde bei ${runden + 1} Runden (gleicher Tank)`, `${verbrauchNeu.toFixed(2)} L`);
+  html += line(`Max. Verbrauch pro Runde bei ${rundenNeu} Runden (1 Runde mehr pro Stint)`, `${verbrauchNeuProRunde.toFixed(2)} L`);
   html += line(`Erforderliche Einsparung pro Runde`, `${verbrauchDifferenz.toFixed(2)} L`);
+  html += line(`Gesamtverbrauch bei ${rundenNeu} Runden`, `${gesamtNeu.toFixed(2)} L`);
 
   out.innerHTML = html;
 }
